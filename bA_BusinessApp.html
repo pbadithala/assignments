@@ -1,0 +1,128 @@
+<template>
+  <lightning-card title="Application" icon-name="custom:custom54">
+    <p style="text-align:center;"></p>
+    <lightning-progress-indicator current-step={currentStep} type="path" has-error="true" variant="base">
+      <lightning-progress-step label="Business Information" value="1" onclick={handleStepBlur}>
+      </lightning-progress-step>
+      <lightning-progress-step label="Address Information" value="2" onclick={handleStepBlur}>
+      </lightning-progress-step>
+      <!-- <lightning-progress-step label="Mailing Address" value="3"></lightning-progress-step> -->
+      <lightning-progress-step label="Individuals" value="3" onclick={handleStepBlur}></lightning-progress-step>
+    </lightning-progress-indicator>
+
+    <!-- <div class="slds-m-around_medium"> -->
+    <div class="slds-m-around_medium slds-align_absolute-center">
+      <!-- <lightning-button variant="brand" if:false={isApplication} label={label} onclick={clickEditHandler}></lightning-button> -->
+    </div>
+
+   <div class="slds-grid slds-gutters">
+
+      <div class="slds-col slds-size_1-of-1">
+        <template if:true={isBusinessActive}>
+          <section> <b>
+              <p style="font-size:x-larger;"> &nbsp;&nbsp;Business Information</p>
+            </b></section>
+        </template>
+        <lightning-layout multiple-rows>
+
+          <template if:true={isBusinessActive}>
+            <lightning-layout-item size="6" padding="around-small">
+              <lightning-input label="Business Name" data-name='Name' value= 'Mirage Designs Limited'
+                onchange={handleChange} disabled={isEditDisabled}></lightning-input>
+            </lightning-layout-item>
+            <lightning-layout-item size="6" padding="around-small">
+              <lightning-input type="email" label="Email" data-name='Email_Address__c' onchange={handleChange}
+                value={business.Email_Address__c} disabled={isEditDisabled}></lightning-input>
+            </lightning-layout-item>
+            <lightning-layout-item class="left-align" size="6" padding="around-small">
+              <lightning-input type="tel" pattern="[0-9]{10}" data-name='Primary_Phone_Number__c'
+                label="Primary Phone Number" value={business.Primary_Phone_Number__c}
+                message-when-pattern-mismatch="Primary Phone number has to be 10 digit" onchange={handleChange}
+                disabled={isEditDisabled}></lightning-input>
+            </lightning-layout-item>
+            <template if:true={ObjectAccess.commentField}>
+              <lightning-layout-item size="12" padding="around-small">
+                <lightning-input data-name="Comments__c" label="Comment" value={business.Comments__c}
+                  onchange={handleChange} disabled={isEditDisabled}></lightning-input>
+              </lightning-layout-item>
+            </template>
+          </template>
+          <template if:true={isAddress}>
+            <div class="slds-grid">
+              <div class="slds-col slds-size_1-of-2">
+                <lightning-layout-item size="12" padding="around-small">
+                  <lightning-input-address address-label="Business Address" street-label="Address Line"
+                    city-label="City" country-label="Country"
+                    province-label="State" postal-code-label="Postal Code"
+                    street={business.Business_Address__c} city={business.Business_Address_City__c}
+                    province={business.Business_Address_State__c} country={business.country}
+                    postal-code={business.Business_Address_Postal_Code__c}
+                    field-level-help="Help Text for inputAddress field" onchange={addressChangeHandler}
+                    disabled={isEditDisabled}></lightning-input-address>
+                </lightning-layout-item>
+                <lightning-layout-item size="12" padding="around-small" class="slds-align_absolute-center">
+                  <lightning-input data-type="checkbox" type="checkbox"
+                    label="Is Mailing Address the same as Business Address" name="input1"
+                    data-name="Is_Mailing_address_the_same__c" onchange={handleCheckboxChange}
+                    disabled={isEditDisabled}></lightning-input>
+                </lightning-layout-item>
+              </div>
+              <div class="slds-col slds-size_1-of-2">
+                <lightning-layout-item size="12" padding="around-small">
+                  <lightning-input-address address-label=" Mailing Address" street-label="Address Line"
+                    city-label="City" province-label="State"
+                    country-label="Country" postal-code-label="PostalCode"
+                    street={business.Mailing_Address__c} city={business.Mailing_Address_City__c}
+                    province={business.Mailing_Address_State__c} country={business.country}
+                    postal-code={business.Mailing_Address_Postal_Code__c}
+                    field-level-help="Help Text for inputAddress field" disabled={isEditDisabled}>
+                  </lightning-input-address>
+                </lightning-layout-item>
+              </div>
+            </div>
+
+            <lightning-layout>
+              <template if:true={ObjectAccess}>
+
+              </template>
+            </lightning-layout>
+          </template>
+
+          <template if:true={isApplication}>
+            <lightning-layout-item size="12" padding="around-small">
+
+              <lightning-card title="Individuals Associated with Enitity / Account">
+
+                  <lightning-button-group slot="actions">
+                    <lightning-button variant="brand" label="Add Applicant" icon-name="utility:adduser" onclick={addApplicantClickHandler}></lightning-button>
+                    <lightning-button-icon icon-name="utility:refresh" name="Refresh" title="Refresh" onclick={doRefresh}></lightning-button-icon>
+                  </lightning-button-group>
+
+                  <template if:true={areChildBoardMemberRecordsPresent}>
+                    <lightning-datatable
+                      data={tableData}
+                      columns={columns}
+                      key-field="Id"
+                      hide-checkbox-column
+                      show-row-number-column
+                      >
+                    </lightning-datatable>
+                  </template>
+
+                  <template if:false={areChildBoardMemberRecordsPresent}>
+                      No record exists.
+                  </template>
+
+              </lightning-card>
+
+            </lightning-layout-item>
+      </template>
+
+        </lightning-layout>
+      </div>
+
+    </div>
+
+
+  </lightning-card>
+</template>
